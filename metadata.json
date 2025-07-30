@@ -1,0 +1,5 @@
+{
+  "name": "Deep Stat",
+  "description": "An AI-powered football match predictor that uses the Gemini API with web search to provide hyper-accurate analysis, including winner prediction, win probability, exact scoreline, and alternative outcomes.",
+  "requestFramePermissions": []
+}
