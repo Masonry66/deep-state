@@ -1,11 +1,13 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-if (!process.env.API_KEY) {
-    throw new Error("API_KEY environment variable not set");
-}
+// --- IMPORTANT SECURITY WARNING ---
+// Hardcoding API keys is not recommended if your repository is public.
+// This key will be visible to anyone who can see your code.
+// Replace "YOUR_API_KEY_HERE" with your actual Gemini API key.
+const API_KEY = "AIzaSyCBo7RHWD44JG-QVmg7qJKfdnvPNV1rzVE";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: API_KEY });
 
 const PROMPT_TEMPLATE = (matchData: string) => `
 You are 'Deep Stat', the world's most advanced football analysis engine. Your task is to provide a hyper-accurate prediction for the given football match.
@@ -58,6 +60,11 @@ Now, perform your analysis and provide the JSON output.
 
 
 export const getMatchPrediction = async (matchData: string): Promise<string> => {
+  // This check provides a clear error message if the key hasn't been added.
+  if (API_KEY === "YOUR_API_KEY_HERE") {
+    throw new Error("Please add your API Key to services/geminiService.ts");
+  }
+
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
@@ -70,6 +77,10 @@ export const getMatchPrediction = async (matchData: string): Promise<string> => 
     return response.text;
   } catch (error) {
     console.error("Gemini API Error:", error);
-    throw new Error("Failed to get prediction from the AI engine.");
+    // Forward the actual error from the API if it's not a connection issue
+    if (error instanceof Error) {
+        throw new Error(`AI Engine Error: ${error.message}`);
+    }
+    throw new Error("Failed to get prediction from the AI engine due to an unknown error.");
   }
 };
